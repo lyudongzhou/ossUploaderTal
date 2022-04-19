@@ -2,93 +2,47 @@
  * @Author: lyudongzhou
  * @Date: 2022-04-18 17:58:30
  * @LastEditors: Lyudongzhou
- * @LastEditTime: 2022-04-19 17:41:40
+ * @LastEditTime: 2022-04-19 18:55:15
  * @Description: 请填写简介
  */
-import babel, { getBabelOutputPlugin, getBabelInputPlugin } from '@rollup/plugin-babel';
+// import babel, { getBabelOutputPlugin, getBabelInputPlugin } from '@rollup/plugin-babel';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import { name, dependencies } from "../package.json";
+import typescript from 'rollup-plugin-typescript';
+import json from '@rollup/plugin-json';
+import sourcemaps from 'rollup-plugin-sourcemaps';
+import { terser } from "rollup-plugin-terser";
 import { resolve } from "path";
 const FORMAT = {
   'ES': 'es',
   'CJS': 'cjs',
   'UMD': 'umd'
 }
-const base = (format) => {
-  switch (format) {
-    case "es":
-    case "cjs":
-      return {
-        input: resolve(__dirname, '../src/index.ts'),
-        external: Object.keys(dependencies),
-        plugins: [
-          nodeResolve(),
-          // commonjs(),
-          getBabelOutputPlugin({
-            allowAllFormats: true,
-            presets: ["@babel/preset-env"],
-            plugins: [
-              [
-                "@babel/plugin-transform-runtime",
-                {
-                  "corejs": 3
-                }
-              ]
-            ]
-          }),
-          getBabelInputPlugin({
-            babelHelpers: "bundled",
-            extensions: ['.js', '.ts'],
-            exclude: [/core-js/],
-            presets: [[
-              "@babel/preset-typescript",
-              {
-                extensions: [".ts"]
-              }
-            ]]
-          }),
-        ]
-      };
-    case "umd":
-      return {
-        input: resolve(__dirname, '../src/index.ts'),
-        external: Object.keys(dependencies),
-        plugins: [
-          nodeResolve({
-            browser: true
-          }),
-          // commonjs(),
-          getBabelInputPlugin({
-            babelHelpers: 'bundled',
-            extensions: ['.js', '.ts'],
-            exclude: [/core-js/],
-            presets: [
-              [
-                "@babel/preset-env",
-                {
-                  "useBuiltIns": "usage",
-                  "corejs": 3,
-                  modules: false,
-                }
-              ],
-              "@babel/preset-typescript"
-            ],
-          }),
-        ]
-      };
-  }
+const base = {
+  input: resolve(__dirname, '../src/index.ts'),
+  external: Object.keys(dependencies),
+  plugins: [
+    terser(),
+    sourcemaps(),
+    nodeResolve({
+      browser: true,
+      preferBuiltins: false,
+    }),
+    commonjs(),
+    json(),
+    typescript(),
+  ]
 };
 const output = function (format) {
   return {
     name,
     dir: resolve(__dirname, `../dist/${format}`),
-    // format 参数，决定输出需要满足哪一种模块化规范
     format,
   }
 }
 export default [
-  { ...base(FORMAT.ES), output: output(FORMAT.ES) },
-  // { ...base(FORMAT.CJS), output: output(FORMAT.CJS) },
-  // { ...base(FORMAT.UMD), output: output(FORMAT.UMD) },
+  { ...base, output: output(FORMAT.ES) },
+  { ...base, output: output(FORMAT.CJS) },
+  { ...base, output: output(FORMAT.UMD) },
 ]
