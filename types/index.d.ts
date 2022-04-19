@@ -1,6 +1,3 @@
-export declare class Person {
-    private name;
-    constructor();
-    play(): void;
-    stand(): Promise<unknown>;
-}
+export declare function upload(e: {
+    file: File;
+}): Promise<string>;

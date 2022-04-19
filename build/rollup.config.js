@@ -2,7 +2,7 @@
  * @Author: lyudongzhou
  * @Date: 2022-04-18 17:58:30
  * @LastEditors: Lyudongzhou
- * @LastEditTime: 2022-04-19 11:11:35
+ * @LastEditTime: 2022-04-19 17:41:40
  * @Description: 请填写简介
  */
 import babel, { getBabelOutputPlugin, getBabelInputPlugin } from '@rollup/plugin-babel';
@@ -24,7 +24,7 @@ const base = (format) => {
         external: Object.keys(dependencies),
         plugins: [
           nodeResolve(),
-          commonjs(),
+          // commonjs(),
           getBabelOutputPlugin({
             allowAllFormats: true,
             presets: ["@babel/preset-env"],
@@ -40,7 +40,13 @@ const base = (format) => {
           getBabelInputPlugin({
             babelHelpers: "bundled",
             extensions: ['.js', '.ts'],
-            presets: ["@babel/preset-typescript"]
+            exclude: [/core-js/],
+            presets: [[
+              "@babel/preset-typescript",
+              {
+                extensions: [".ts"]
+              }
+            ]]
           }),
         ]
       };
@@ -52,8 +58,8 @@ const base = (format) => {
           nodeResolve({
             browser: true
           }),
-          commonjs(),
-          babel({
+          // commonjs(),
+          getBabelInputPlugin({
             babelHelpers: 'bundled',
             extensions: ['.js', '.ts'],
             exclude: [/core-js/],
@@ -83,6 +89,6 @@ const output = function (format) {
 }
 export default [
   { ...base(FORMAT.ES), output: output(FORMAT.ES) },
-  { ...base(FORMAT.CJS), output: output(FORMAT.CJS) },
-  { ...base(FORMAT.UMD), output: output(FORMAT.UMD) },
+  // { ...base(FORMAT.CJS), output: output(FORMAT.CJS) },
+  // { ...base(FORMAT.UMD), output: output(FORMAT.UMD) },
 ]
