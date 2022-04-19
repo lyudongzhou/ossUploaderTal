@@ -2,10 +2,10 @@
  * @Author: lyudongzhou
  * @Date: 2022-04-18 17:58:30
  * @LastEditors: Lyudongzhou
- * @LastEditTime: 2022-04-19 10:24:11
+ * @LastEditTime: 2022-04-19 11:11:35
  * @Description: 请填写简介
  */
-import babel from '@rollup/plugin-babel';
+import babel, { getBabelOutputPlugin, getBabelInputPlugin } from '@rollup/plugin-babel';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import { name, dependencies } from "../package.json";
@@ -23,27 +23,11 @@ const base = (format) => {
         input: resolve(__dirname, '../src/index.ts'),
         external: Object.keys(dependencies),
         plugins: [
-          nodeResolve({
-            customResolveOptions: {
-              moduleDirectory: 'node_modules'
-            }
-          }),
+          nodeResolve(),
           commonjs(),
-          babel({
-            babelHelpers: 'runtime',
-            extensions: ['.js', '.ts'],
-            exclude: [/core-js/],
-            presets: [
-              [
-                "@babel/preset-env",
-                {
-                  "useBuiltIns": "usage",
-                  corejs: 3,
-                  "modules":false
-                }
-              ],
-              "@babel/preset-typescript"
-            ],
+          getBabelOutputPlugin({
+            allowAllFormats: true,
+            presets: ["@babel/preset-env"],
             plugins: [
               [
                 "@babel/plugin-transform-runtime",
@@ -52,6 +36,11 @@ const base = (format) => {
                 }
               ]
             ]
+          }),
+          getBabelInputPlugin({
+            babelHelpers: "bundled",
+            extensions: ['.js', '.ts'],
+            presets: ["@babel/preset-typescript"]
           }),
         ]
       };
@@ -93,7 +82,7 @@ const output = function (format) {
   }
 }
 export default [
-  // { ...base(FORMAT.ES), output: output(FORMAT.ES) },
+  { ...base(FORMAT.ES), output: output(FORMAT.ES) },
   { ...base(FORMAT.CJS), output: output(FORMAT.CJS) },
-  // { ...base(FORMAT.UMD), output: output(FORMAT.UMD) },
+  { ...base(FORMAT.UMD), output: output(FORMAT.UMD) },
 ]
