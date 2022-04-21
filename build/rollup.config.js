@@ -2,7 +2,7 @@
  * @Author: lyudongzhou
  * @Date: 2022-04-18 17:58:30
  * @LastEditors: Lyudongzhou
- * @LastEditTime: 2022-04-19 18:55:15
+ * @LastEditTime: 2022-04-21 10:37:46
  * @Description: 请填写简介
  */
 // import babel, { getBabelOutputPlugin, getBabelInputPlugin } from '@rollup/plugin-babel';
@@ -23,7 +23,7 @@ const base = {
   input: resolve(__dirname, '../src/index.ts'),
   external: Object.keys(dependencies),
   plugins: [
-    terser(),
+    // terser(),
     sourcemaps(),
     nodeResolve({
       browser: true,
