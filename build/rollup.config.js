@@ -2,7 +2,7 @@
  * @Author: lyudongzhou
  * @Date: 2022-04-18 17:58:30
  * @LastEditors: Lyudongzhou
- * @LastEditTime: 2022-04-21 10:37:46
+ * @LastEditTime: 2022-04-22 16:27:26
  * @Description: 请填写简介
  */
 // import babel, { getBabelOutputPlugin, getBabelInputPlugin } from '@rollup/plugin-babel';
@@ -13,7 +13,10 @@ import typescript from 'rollup-plugin-typescript';
 import json from '@rollup/plugin-json';
 import sourcemaps from 'rollup-plugin-sourcemaps';
 import { terser } from "rollup-plugin-terser";
+import PostCSS from 'rollup-plugin-postcss'
+import vue from "rollup-plugin-vue";
 import { resolve } from "path";
+console.log(Object.keys(dependencies))
 const FORMAT = {
   'ES': 'es',
   'CJS': 'cjs',
@@ -21,17 +24,28 @@ const FORMAT = {
 }
 const base = {
   input: resolve(__dirname, '../src/index.ts'),
-  external: Object.keys(dependencies),
+  external: [
+    'ali-oss',
+    'axios',
+    'core-js',
+    'element-plus',
+    'regenerator-runtime',
+    'url',
+    'uuid',
+    'vue'
+  ],
   plugins: [
-    // terser(),
-    sourcemaps(),
     nodeResolve({
       browser: true,
       preferBuiltins: false,
     }),
-    commonjs(),
     json(),
     typescript(),
+    vue(),
+    PostCSS(),
+    terser(),
+    sourcemaps(),
+    commonjs(),
   ]
 };
 const output = function (format) {
@@ -39,6 +53,7 @@ const output = function (format) {
     name,
     dir: resolve(__dirname, `../dist/${format}`),
     format,
+    sourcemap: true,
   }
 }
 export default [
