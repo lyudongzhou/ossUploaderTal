@@ -2,7 +2,7 @@
  * @Author: lyudongzhou
  * @Date: 2022-04-18 17:58:30
  * @LastEditors: Lyudongzhou
- * @LastEditTime: 2022-04-22 16:27:26
+ * @LastEditTime: 2022-04-22 18:23:51
  * @Description: 请填写简介
  */
 // import babel, { getBabelOutputPlugin, getBabelInputPlugin } from '@rollup/plugin-babel';
@@ -17,6 +17,7 @@ import PostCSS from 'rollup-plugin-postcss'
 import vue from "rollup-plugin-vue";
 import { resolve } from "path";
 console.log(Object.keys(dependencies))
+console.log(__dirname)
 const FORMAT = {
   'ES': 'es',
   'CJS': 'cjs',
