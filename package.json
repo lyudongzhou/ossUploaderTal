@@ -1,17 +1,16 @@
 {
   "name": "ossuploadertal",
-  "version": "1.0.12",
+  "version": "1.0.14",
   "description": "",
-  "main": "./dist/cjs/index.js",
-  "module": "./dist/es/index.js",
+  "main": "./dist/app.js",
+  "module": "./dist/app.js",
   "files": [
     "dist",
     "README.md"
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rm -rf ./dist&&tsc&&rollup -c ./build/rollup.config.js",
-    "declaration": "tsc --declaration"
+    "build": "rm -rf ./dist&&tsc&&rollup -c --sourcemap"
   },
   "repository": {
     "type": "git",
@@ -22,7 +21,7 @@
   "bugs": {
     "url": "https://github.com/lyudongzhou/ossUploaderTal/issues"
   },
-  "types": "./dist/types/index.d.ts",
+  "types": "./dist/index.d.ts",
   "homepage": "https://github.com/lyudongzhou/ossUploaderTal#readme",
   "devDependencies": {
     "@element-plus/icons": "^0.0.11",
@@ -48,7 +47,7 @@
     "rollup-plugin-postcss": "^4.0.2",
     "rollup-plugin-sourcemaps": "^0.6.3",
     "rollup-plugin-terser": "^7.0.2",
-    "rollup-plugin-typescript": "^1.0.1",
+    "rollup-plugin-typescript2": "^0.31.2",
     "rollup-plugin-vue": "^6.0.0",
     "tslib": "^2.3.1",
     "typescript": "^4.6.3",
@@ -62,8 +61,8 @@
     "vue": "^3.2.33"
   },
   "dependencies": {
-    "url": "^0.11.0",
     "ali-oss": "^6.17.1",
+    "url": "^0.11.0",
     "uuid": "^8.3.2"
   }
 }

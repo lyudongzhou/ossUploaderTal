@@ -8,7 +8,12 @@
 <template>
   <div class="cover">
     <div class="select-title">{{ props.title }}</div>
-    <ElUpload class="avatar-uploader" :http-request="uploadCover" :accept="props.fileTypes.join(',')" action=" ">
+    <ElUpload
+      class="avatar-uploader"
+      :http-request="uploadCover"
+      :accept="props.fileTypes.join(',')"
+      action=" "
+    >
       <ElIcon class="avatar-uploader-icon">
         <Plus />
       </ElIcon>
@@ -28,18 +33,18 @@ type propsDef = {
   fileTypes?: string[];
   title?: string;
   sender: AxiosSender;
-  modelValue: string | null;
-}
+  modelValue: any;
+};
 type emitsDef = {
-  (e: 'update:modelValue', url: string): void
-}
-const emits = defineEmits<emitsDef>()
+  (e: "update:modelValue", url: string): void;
+};
+const emits = defineEmits<emitsDef>();
 const props = withDefaults(defineProps<propsDef>(), {
   sizeLimit: 5242880,
   sizeLimitText: "仅支持5M以内的图片文件。",
   fileTypes: () => ["image/jpeg", "image/jpg", "image/png"],
-  title: "封面"
-})
+  title: "封面",
+});
 function isCorrectFileType(file: File, fileTypes: string[]) {
   return fileTypes.includes(file.type);
 }
@@ -49,11 +54,15 @@ async function uploadCover(e: { file: File }) {
     return;
   }
   if (!isCorrectFileType(e.file, props.fileTypes)) {
-    ElMessage.error("仅支持" + props.fileTypes.map(type => type.split('/')[1]).join("、") + "格式的图片文件。");
+    ElMessage.error(
+      "仅支持" +
+        props.fileTypes.map((type) => type.split("/")[1]).join("、") +
+        "格式的图片文件。"
+    );
     return;
   }
   const url = await upload(e, props.sender);
-  emits("update:modelValue", url)
+  emits("update:modelValue", url);
 }
 </script>
 <style scoped lang="less">
