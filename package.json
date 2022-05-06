@@ -1,6 +1,6 @@
 {
   "name": "ossuploadertal",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "description": "",
   "main": "./dist/app.js",
   "module": "./dist/app.js",
@@ -61,6 +61,7 @@
     "vue": "^3.2.33"
   },
   "dependencies": {
+    "@element-plus/icons-vue": "^1.1.4",
     "ali-oss": "^6.17.1",
     "url": "^0.11.0",
     "uuid": "^8.3.2"

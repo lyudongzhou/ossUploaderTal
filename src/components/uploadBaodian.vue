@@ -2,29 +2,27 @@
  * @Author: lyudongzhou
  * @Date: 2022-04-21 13:35:57
  * @LastEditors: Lyudongzhou
- * @LastEditTime: 2022-04-22 15:58:35
+ * @LastEditTime: 2022-05-06 11:06:21
  * @Description: 请填写简介
 -->
 <template>
   <div class="cover">
     <div class="select-title">{{ props.title }}</div>
-    <ElUpload
-      class="avatar-uploader"
-      :http-request="uploadCover"
-      :accept="props.fileTypes.join(',')"
-      action=" "
-    >
+    <ElUpload class="avatar-uploader" :http-request="uploadCover" :accept="props.fileTypes.join(',')" action=" ">
       <ElIcon class="avatar-uploader-icon">
         <Plus />
       </ElIcon>
     </ElUpload>
     <img class="image" :src="props.modelValue" v-if="props.modelValue" />
+    <ElIcon class="delete-icon" v-if="props.allowDelete && props.modelValue" @click="emits('update:modelValue', '')" :size="20">
+      <Delete />
+    </ElIcon>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ElUpload, ElIcon, ElMessage } from "element-plus";
-import { Plus } from "@element-plus/icons";
+import { Plus, Delete } from "@element-plus/icons";
 import { withDefaults } from "vue";
 import { upload, AxiosSender } from "../upload/index";
 type propsDef = {
@@ -34,9 +32,11 @@ type propsDef = {
   title?: string;
   sender: AxiosSender;
   modelValue: any;
+  allowDelete?: boolean;
 };
 type emitsDef = {
   (e: "update:modelValue", url: string): void;
+  (e: "onDelete"): void
 };
 const emits = defineEmits<emitsDef>();
 const props = withDefaults(defineProps<propsDef>(), {
@@ -44,6 +44,7 @@ const props = withDefaults(defineProps<propsDef>(), {
   sizeLimitText: "仅支持5M以内的图片文件。",
   fileTypes: () => ["image/jpeg", "image/jpg", "image/png"],
   title: "封面",
+  allowDelete: true
 });
 function isCorrectFileType(file: File, fileTypes: string[]) {
   return fileTypes.includes(file.type);
@@ -56,8 +57,8 @@ async function uploadCover(e: { file: File }) {
   if (!isCorrectFileType(e.file, props.fileTypes)) {
     ElMessage.error(
       "仅支持" +
-        props.fileTypes.map((type) => type.split("/")[1]).join("、") +
-        "格式的图片文件。"
+      props.fileTypes.map((type) => type.split("/")[1]).join("、") +
+      "格式的图片文件。"
     );
     return;
   }
@@ -68,9 +69,24 @@ async function uploadCover(e: { file: File }) {
 <style scoped lang="less">
 .cover {
   display: inline-flex;
+  position: relative;
 
   :deep(.el-upload-list) {
     display: none;
+  }
+
+  .delete-icon {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    cursor: pointer;
+    background-color: white;
+    transition: all 0.3s ease;
+  }
+
+  .delete-icon:hover {
+    color: #409eff;
+    transition: all 0.3s ease;
   }
 
   .image {
