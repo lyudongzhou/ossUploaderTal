@@ -2,28 +2,32 @@
  * @Author: lyudongzhou
  * @Date: 2022-04-21 13:35:57
  * @LastEditors: Lyudongzhou
- * @LastEditTime: 2022-05-06 11:06:21
+ * @LastEditTime: 2022-05-06 15:39:24
  * @Description: 请填写简介
 -->
 <template>
   <div class="cover">
-    <div class="select-title">{{ props.title }}</div>
-    <ElUpload class="avatar-uploader" :http-request="uploadCover" :accept="props.fileTypes.join(',')" action=" ">
-      <ElIcon class="avatar-uploader-icon">
+    <div class="select-title" v-if="props.title">{{ props.title }}</div>
+    <ElUpload :http-request="uploadCover" :accept="props.fileTypes.join(',')" action=" ">
+      <ElIcon :style="styleComputed">
         <Plus />
       </ElIcon>
     </ElUpload>
-    <img class="image" :src="props.modelValue" v-if="props.modelValue" />
-    <ElIcon class="delete-icon" v-if="props.allowDelete && props.modelValue" @click="emits('update:modelValue', '')" :size="20">
+    <slot name="afterUpload"></slot>
+    <el-image v-if="props.modelValue" class="image" :src="srcComputed" fit="scale-down" :style="styleComputed"
+      :preview-src-list="[props.modelValue]" :initial-index="1" />
+    <!-- <img class="image" :src="props.modelValue" v-if="props.modelValue" /> -->
+    <ElIcon class="delete-icon" v-if="props.allowDelete && props.modelValue" @click="emits('update:modelValue', '')"
+      :size="20">
       <Delete />
     </ElIcon>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ElUpload, ElIcon, ElMessage } from "element-plus";
+import { ElUpload, ElIcon, ElMessage, ElImage } from "element-plus";
 import { Plus, Delete } from "@element-plus/icons";
-import { withDefaults } from "vue";
+import { withDefaults, computed } from "vue";
 import { upload, AxiosSender } from "../upload/index";
 type propsDef = {
   sizeLimit?: number;
@@ -33,6 +37,8 @@ type propsDef = {
   sender: AxiosSender;
   modelValue: any;
   allowDelete?: boolean;
+  useZip?: boolean;
+  zipSize?: number;
 };
 type emitsDef = {
   (e: "update:modelValue", url: string): void;
@@ -43,9 +49,17 @@ const props = withDefaults(defineProps<propsDef>(), {
   sizeLimit: 5242880,
   sizeLimitText: "仅支持5M以内的图片文件。",
   fileTypes: () => ["image/jpeg", "image/jpg", "image/png"],
-  title: "封面",
-  allowDelete: true
+  title: "",
+  allowDelete: true,
+  useZip: true,
+  zipSize: 178
 });
+const srcComputed = computed(() => {
+  return props.modelValue + (props.useZip ? `?x-oss-process=image/resize,m_mfit,h_${props.zipSize},w_${props.zipSize}` : "");
+});
+const styleComputed = computed(() => {
+  return { width: props.zipSize + "px", height: props.zipSize + "px" };
+})
 function isCorrectFileType(file: File, fileTypes: string[]) {
   return fileTypes.includes(file.type);
 }
@@ -82,6 +96,7 @@ async function uploadCover(e: { file: File }) {
     cursor: pointer;
     background-color: white;
     transition: all 0.3s ease;
+    border-radius: 5px;
   }
 
   .delete-icon:hover {
