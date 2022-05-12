@@ -1,6 +1,6 @@
 {
   "name": "ossuploadertal",
-  "version": "1.0.16",
+  "version": "1.0.17",
   "description": "",
   "main": "./dist/app.js",
   "module": "./dist/app.js",

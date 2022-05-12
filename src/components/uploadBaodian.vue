@@ -7,7 +7,7 @@
 -->
 <template>
   <div class="cover">
-    <div class="select-title" v-if="props.title">{{ props.title }}</div>
+    <div :class="styleClass" v-if="props.title">{{ props.title }}</div>
     <ElUpload :http-request="uploadCover" :accept="props.fileTypes.join(',')" action=" ">
       <ElIcon :style="styleComputed">
         <Plus />
@@ -39,6 +39,7 @@ type propsDef = {
   allowDelete?: boolean;
   useZip?: boolean;
   zipSize?: number;
+  required?:boolean;
 };
 type emitsDef = {
   (e: "update:modelValue", url: string): void;
@@ -52,8 +53,13 @@ const props = withDefaults(defineProps<propsDef>(), {
   title: "",
   allowDelete: true,
   useZip: true,
-  zipSize: 178
+  zipSize: 178,
+  required:true
 });
+const styleClass = {
+  "is-required":props.required,
+  "select-title":true,
+}
 const srcComputed = computed(() => {
   return props.modelValue + (props.useZip ? `?x-oss-process=image/resize,m_mfit,h_${props.zipSize},w_${props.zipSize}` : "");
 });
@@ -119,7 +125,7 @@ async function uploadCover(e: { file: File }) {
     cursor: default;
   }
 
-  .select-title:before {
+  .is-required:before {
     content: "*";
     color: rgb(245, 108, 108);
     margin-right: 4px;
